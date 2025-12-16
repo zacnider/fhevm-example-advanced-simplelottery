@@ -26,36 +26,58 @@ import type {
 export interface SimpleLotteryInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "confidentialProtocolId"
       | "enter"
       | "entropyOracle"
+      | "getEncryptedEntropy"
+      | "getEntropyOracle"
       | "getStatus"
       | "hasParticipated"
+      | "isEntropyStored"
       | "lotteryComplete"
       | "lotteryRound"
       | "participants"
+      | "requestEntropy"
       | "resetLottery"
-      | "selectWinner"
+      | "selectWinnerWithEntropy"
       | "winner"
       | "winningRequestId"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "EntropyStored"
       | "LotteryReset"
       | "LotteryStarted"
       | "ParticipantAdded"
       | "WinnerSelected"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "confidentialProtocolId",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "enter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "entropyOracle",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEncryptedEntropy",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntropyOracle",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getStatus", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "hasParticipated",
     values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isEntropyStored",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "lotteryComplete",
@@ -70,12 +92,16 @@ export interface SimpleLotteryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "requestEntropy",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "resetLottery",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "selectWinner",
-    values?: undefined
+    functionFragment: "selectWinnerWithEntropy",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "winner", values?: undefined): string;
   encodeFunctionData(
@@ -83,14 +109,30 @@ export interface SimpleLotteryInterface extends Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "confidentialProtocolId",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "enter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "entropyOracle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEncryptedEntropy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntropyOracle",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "hasParticipated",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isEntropyStored",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -106,11 +148,15 @@ export interface SimpleLotteryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "requestEntropy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "resetLottery",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "selectWinner",
+    functionFragment: "selectWinnerWithEntropy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "winner", data: BytesLike): Result;
@@ -118,6 +164,18 @@ export interface SimpleLotteryInterface extends Interface {
     functionFragment: "winningRequestId",
     data: BytesLike
   ): Result;
+}
+
+export namespace EntropyStoredEvent {
+  export type InputTuple = [requestId: BigNumberish];
+  export type OutputTuple = [requestId: bigint];
+  export interface OutputObject {
+    requestId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace LotteryResetEvent {
@@ -218,9 +276,15 @@ export interface SimpleLottery extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  confidentialProtocolId: TypedContractMethod<[], [bigint], "view">;
+
   enter: TypedContractMethod<[], [void], "nonpayable">;
 
   entropyOracle: TypedContractMethod<[], [string], "view">;
+
+  getEncryptedEntropy: TypedContractMethod<[], [string], "view">;
+
+  getEntropyOracle: TypedContractMethod<[], [string], "view">;
 
   getStatus: TypedContractMethod<
     [],
@@ -241,15 +305,23 @@ export interface SimpleLottery extends BaseContract {
     "view"
   >;
 
+  isEntropyStored: TypedContractMethod<[], [boolean], "view">;
+
   lotteryComplete: TypedContractMethod<[], [boolean], "view">;
 
   lotteryRound: TypedContractMethod<[], [bigint], "view">;
 
   participants: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
+  requestEntropy: TypedContractMethod<[tag: BytesLike], [bigint], "payable">;
+
   resetLottery: TypedContractMethod<[], [void], "nonpayable">;
 
-  selectWinner: TypedContractMethod<[], [void], "payable">;
+  selectWinnerWithEntropy: TypedContractMethod<
+    [requestId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
   winner: TypedContractMethod<[], [string], "view">;
 
@@ -260,10 +332,19 @@ export interface SimpleLottery extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "confidentialProtocolId"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "enter"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "entropyOracle"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getEncryptedEntropy"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getEntropyOracle"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getStatus"
@@ -287,6 +368,9 @@ export interface SimpleLottery extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "isEntropyStored"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
     nameOrSignature: "lotteryComplete"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
@@ -296,11 +380,14 @@ export interface SimpleLottery extends BaseContract {
     nameOrSignature: "participants"
   ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
   getFunction(
+    nameOrSignature: "requestEntropy"
+  ): TypedContractMethod<[tag: BytesLike], [bigint], "payable">;
+  getFunction(
     nameOrSignature: "resetLottery"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "selectWinner"
-  ): TypedContractMethod<[], [void], "payable">;
+    nameOrSignature: "selectWinnerWithEntropy"
+  ): TypedContractMethod<[requestId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "winner"
   ): TypedContractMethod<[], [string], "view">;
@@ -308,6 +395,13 @@ export interface SimpleLottery extends BaseContract {
     nameOrSignature: "winningRequestId"
   ): TypedContractMethod<[], [bigint], "view">;
 
+  getEvent(
+    key: "EntropyStored"
+  ): TypedContractEvent<
+    EntropyStoredEvent.InputTuple,
+    EntropyStoredEvent.OutputTuple,
+    EntropyStoredEvent.OutputObject
+  >;
   getEvent(
     key: "LotteryReset"
   ): TypedContractEvent<
@@ -338,6 +432,17 @@ export interface SimpleLottery extends BaseContract {
   >;
 
   filters: {
+    "EntropyStored(uint256)": TypedContractEvent<
+      EntropyStoredEvent.InputTuple,
+      EntropyStoredEvent.OutputTuple,
+      EntropyStoredEvent.OutputObject
+    >;
+    EntropyStored: TypedContractEvent<
+      EntropyStoredEvent.InputTuple,
+      EntropyStoredEvent.OutputTuple,
+      EntropyStoredEvent.OutputObject
+    >;
+
     "LotteryReset(uint256)": TypedContractEvent<
       LotteryResetEvent.InputTuple,
       LotteryResetEvent.OutputTuple,
