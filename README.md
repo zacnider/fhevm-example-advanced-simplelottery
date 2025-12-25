@@ -1,6 +1,10 @@
 # SimpleLottery
 
-Simple lottery using entropy oracle with FHE operations
+Learn how to build a simple lottery system using encrypted randomness
+
+## 🎓 What You'll Learn
+
+This example teaches you how to use FHEVM to build privacy-preserving smart contracts. You'll learn step-by-step how to implement encrypted operations, manage permissions, and work with encrypted data.
 
 ## 🚀 Quick Start
 
@@ -48,13 +52,13 @@ Simple lottery using entropy oracle with FHE operations
 
 ---
 
-## 📋 Overview
+## 📚 Overview
 
 @title SimpleLottery
-@notice Simple lottery using entropy oracle with FHE operations
-@dev Example demonstrating how to use EntropyOracle with FHE for lottery winner selection
-This example shows:
-- Integrating with an entropy oracle
+@notice Simple lottery using encrypted randomness with FHE operations
+@dev Example demonstrating how to use encrypted randomness with FHE for lottery winner selection
+In this example, you will learn:
+- Integrating with an encrypted randomness
 - Using encrypted entropy in FHE operations
 - FHE-based winner selection using entropy
 - Round-based lottery system
@@ -63,7 +67,7 @@ This example shows:
 
 @notice Request entropy for winner selection
 @param tag Unique tag for this request
-@return requestId Request ID from EntropyOracle
+@return requestId Request ID from encrypted randomness
 @dev Requires 0.00001 ETH fee. Call selectWinnerWithEntropy() after request is fulfilled.
 
 @notice Select winner using encrypted entropy with FHE operations
@@ -80,19 +84,19 @@ Entropy is used with FHE operations, then made publicly decryptable for winner s
 @notice Check if entropy is stored
 @return True if encrypted entropy is stored
 
-@notice Get EntropyOracle address
-@return Address of EntropyOracle contract
+@notice Get encrypted randomness address
+@return Address of encrypted randomness contract
 
 @notice Reset lottery to start a new round
 @dev Clears participants and allows new entries
 
 
 
-## 🔐 Zama FHEVM Usage
+## 🔐 Learn Zama FHEVM Through This Example
 
-This example demonstrates the following **Zama FHEVM** features:
+This example teaches you how to use the following **Zama FHEVM** features:
 
-### Zama FHEVM Features Used
+### What You'll Learn About
 
 - **ZamaEthereumConfig**: Inherits from Zama's network configuration
   ```solidity
@@ -143,11 +147,11 @@ euint64 finalResult = FHE.xor(result, entropy);
 FHE.allowThis(finalResult);
 ```
 
-### Zama FHEVM Concepts Demonstrated
+### FHEVM Concepts You'll Learn
 
-1. **Complex FHE Operations**: Using Zama FHEVM to complex fhe operations
-2. **Real-World Applications**: Using Zama FHEVM to real-world applications
-3. **Entropy Integration**: Using Zama FHEVM to entropy integration
+1. **Complex FHE Operations**: Learn how to use Zama FHEVM for complex fhe operations
+2. **Real-World Applications**: Learn how to use Zama FHEVM for real-world applications
+3. **Entropy Integration**: Learn how to use Zama FHEVM for entropy integration
 
 ### Learn More About Zama FHEVM
 
